@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
-// Export sets environment variables.
+
 func Export(w io.Writer, args ...string) error {
 	if len(args) < 1 {
 		return fmt.Errorf("usage: export name1=value1 [name2=value2 ...]")
