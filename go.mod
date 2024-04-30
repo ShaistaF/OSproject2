@@ -1,4 +1,4 @@
-module github.com/jh125486/CSCE4600
+module github.com/ShaistaF/OSproject2
 
 go 1.22
 
