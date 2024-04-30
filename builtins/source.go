@@ -1,4 +1,3 @@
-
 package builtins
 
 import (
@@ -28,7 +27,10 @@ func Source(w io.Writer, args ...string) error {
 			// Skip empty lines and comments.
 			continue
 		}
-		// Removed the call to handleInput
+		// Execute the shell command from the source file.
+		if err := handleInput(w, line); err != nil {
+			return err
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
