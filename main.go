@@ -82,12 +82,12 @@ func handleInput(w io.Writer, input string, exit chan<- struct{}) error {
 		return builtins.Echo(w, args...)
 	case "alias":
 		return builtins.SetAlias(w, args...)
-	case "export":
-		return builtins.Export(w, args...)
 	case "test":
 		return builtins.Test(w, args...)
-	case "print":
-		return builtins.Print(w, args...)
+	case "source":
+		return builtins.Source(w, args...)
+	case "export":
+		return builtins.Export(w, args...)
 	case "exit":
 		exit <- struct{}{}
 		return nil
