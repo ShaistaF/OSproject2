@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// Source reads and executes commands from a file in the current shell environment.
+
 func Source(w io.Writer, args ...string) error {
 	if len(args) < 1 {
 		return fmt.Errorf("usage: source filename")
