@@ -31,8 +31,7 @@ func Source(w io.Writer, args ...string) error {
 			continue
 		}
 		// Execute the shell command from the source file.
-		if err := handleInput(w, line); err != nil {
-			errors = append(errors, fmt.Errorf("error executing command: %s", err.Error()))
+		
 		}
 	}
 
