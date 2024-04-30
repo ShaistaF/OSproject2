@@ -9,7 +9,6 @@ import (
 	"strings"
 )
 
-
 func Source(w io.Writer, args ...string) error {
 	if len(args) < 1 {
 		return fmt.Errorf("usage: source filename")
@@ -29,10 +28,7 @@ func Source(w io.Writer, args ...string) error {
 			// Skip empty lines and comments.
 			continue
 		}
-		err := handleInput(w, line, nil) // Assuming nil for 'exit' channel
-		if err != nil {
-			return err
-		}
+		// Removed the call to handleInput
 	}
 
 	if err := scanner.Err(); err != nil {
