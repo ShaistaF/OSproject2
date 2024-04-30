@@ -78,6 +78,16 @@ func handleInput(w io.Writer, input string, exit chan<- struct{}) error {
 		return builtins.ChangeDirectory(args...)
 	case "env":
 		return builtins.EnvironmentVariables(w, args...)
+	case "echo":
+		return builtins.Echo(w, args...)
+	case "alias":
+		return builtins.SetAlias(w, args...)
+	case "export":
+		return builtins.Export(w, args...)
+	case "test":
+		return builtins.Test(w, args...)
+	case "print":
+		return builtins.Print(w, args...)
 	case "exit":
 		exit <- struct{}{}
 		return nil
