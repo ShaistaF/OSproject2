@@ -4,7 +4,7 @@ package builtins
 import (
 	"fmt"
 	"io"
-	"strings"
+	
 )
 
 // Test evaluates conditional expressions.
