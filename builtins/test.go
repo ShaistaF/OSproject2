@@ -1,13 +1,11 @@
-
 package builtins
 
 import (
 	"fmt"
 	"io"
-	
 )
 
-// Test evaluates conditional expressions.
+
 func Test(w io.Writer, args ...string) error {
 	if len(args) < 3 {
 		return fmt.Errorf("usage: test arg1 operator arg2")
@@ -19,7 +17,14 @@ func Test(w io.Writer, args ...string) error {
 		result = arg1 == arg2
 	case "!=":
 		result = arg1 != arg2
-	// Add other operators as needed
+	case ">":
+		result = arg1 > arg2
+	case "<":
+		result = arg1 < arg2
+	case ">=":
+		result = arg1 >= arg2
+	case "<=":
+		result = arg1 <= arg2
 	default:
 		return fmt.Errorf("unsupported operator: %s", operator)
 	}
