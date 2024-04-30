@@ -1,4 +1,4 @@
-func TestTest(t *testing.T) {
+func TestEvaluateConditionalExpressions(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        []string
