@@ -1,3 +1,4 @@
+// Package builtins provides implementations of shell built-in commands.
 package builtins
 
 import (
@@ -20,8 +21,6 @@ func Source(w io.Writer, args ...string) error {
 	}
 	defer file.Close()
 
-	var errors []error
-
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -30,21 +29,11 @@ func Source(w io.Writer, args ...string) error {
 			// Skip empty lines and comments.
 			continue
 		}
-		// Execute the shell command from the source file.
 		
-		}
 	}
 
 	if err := scanner.Err(); err != nil {
-		errors = append(errors, err)
-	}
-
-	if len(errors) > 0 {
-		var errMsg string
-		for _, err := range errors {
-			errMsg += fmt.Sprintf("%s\n", err.Error())
-		}
-		return fmt.Errorf("encountered %d error(s) while sourcing file:\n%s", len(errors), errMsg)
+		return err
 	}
 
 	return nil
