@@ -1,17 +1,25 @@
-
 package builtins
 
 import (
 	"fmt"
 	"io"
-	"strings"
 )
 
 func Echo(w io.Writer, args ...string) error {
-	// Join the arguments into a single string separated by spaces.
-	echoOutput := strings.Join(args, " ")
+	for i, arg := range args {
+		if i > 0 {
+			_, err := fmt.Fprint(w, " ")
+			if err != nil {
+				return err
+			}
+		}
+		_, err := fmt.Fprint(w, arg)
+		if err != nil {
+			return err
+		}
+	}
 
-	// Print the output to the provided writer.
-	_, err := fmt.Fprintln(w, echoOutput)
+	
+	_, err := fmt.Fprintln(w)
 	return err
 }
