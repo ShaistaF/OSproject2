@@ -9,7 +9,7 @@ import (
 	"os/user"
 	"strings"
 
-	"github.com/ShaistaF/OSproject2/builtins/builtin"
+	"github.com/ShaistaF/OSproject2/builtins"
 )
 
 func main() {
