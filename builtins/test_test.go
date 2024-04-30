@@ -1,10 +1,3 @@
-package builtins
-
-import (
-	"bytes"
-	"testing"
-)
-
 func TestTest(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -14,6 +7,10 @@ func TestTest(t *testing.T) {
 	}{
 		{"Equal Test", []string{"hello", "=", "hello"}, "true\n", false},
 		{"Not Equal Test", []string{"hello", "!=", "world"}, "true\n", false},
+		{"Greater Than Test", []string{"5", ">", "3"}, "true\n", false},
+		{"Less Than Test", []string{"3", "<", "5"}, "true\n", false},
+		{"Greater Than Or Equal To Test", []string{"5", ">=", "5"}, "true\n", false},
+		{"Less Than Or Equal To Test", []string{"5", "<=", "5"}, "true\n", false},
 		{"Invalid Operator Test", []string{"hello", "+", "world"}, "", true},
 		{"Missing Args Test", []string{"hello", "="}, "", true},
 	}
