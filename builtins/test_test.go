@@ -1,3 +1,9 @@
+package builtins
+
+import (
+	"bytes"
+	"testing"
+)
 func TestEvaluateConditionalExpressions(t *testing.T) {
 	tests := []struct {
 		name        string
