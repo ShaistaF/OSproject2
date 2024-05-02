@@ -1,0 +1,48 @@
+name: "Run golangci-lint"
+description: "Official golangci-lint action with line-attached annotations for found issues, caching and parallel execution."
+author: "golangci"
+inputs:
+  version:
+    description: |
+      The version of golangci-lint to use.
+      When `install-mode` is `binary` (default) the value can be v1.2 or v1.2.3 or `latest` to use the latest version.
+      When `install-mode` is `goinstall` the value can be v1.2.3, `latest`, or the hash of a commit.
+    required: false
+  args:
+    description: "golangci-lint command line arguments"
+    default: ""
+    required: false
+  working-directory:
+    description: "golangci-lint working directory, default is project root"
+    required: false
+  github-token:
+    description: "the token is used for fetching patch of a pull request to show only new issues"
+    default: ${{ github.token }}
+    required: false
+  only-new-issues:
+    description: "if set to true and the action runs on a pull request - the action outputs only newly found issues"
+    default: 'false'
+    required: false
+  skip-cache:
+    description: |
+      if set to true then the all caching functionality will be complete disabled,
+      takes precedence over all other caching options.
+    default: 'false'
+    required: false
+  skip-save-cache:
+    description: |
+      if set to true then the action will not save any caches, but it may still
+      restore existing caches, subject to other options.
+    default: 'false'
+    required: false
+  install-mode:
+    description: "The mode to install golangci-lint. It can be 'binary' or 'goinstall'."
+    default: "binary"
+    required: false
+runs:
+  using: "node20"
+  main: "dist/run/index.js"
+  post: "dist/post_run/index.js"
+branding:
+  icon: "shield"
+  color: "yellow"
