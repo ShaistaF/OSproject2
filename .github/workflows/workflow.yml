@@ -28,7 +28,7 @@ jobs:
 
     - name: Linting with golangci-lint
       run: |
-        go install github.com/golangci/golangci-lint/cmd/email protected
+        go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.1
         golangci-lint run ./...
 
     - name: Run Tests
