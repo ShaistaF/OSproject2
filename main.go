@@ -73,21 +73,23 @@ func handleInput(w io.Writer, input string, exit chan<- struct{}) error {
 
 	// Check for built-in commands.
 	// New builtin commands should be added here. Eventually this should be refactored to its own func.
-	switch name {
+	switch name 
+	
+	{
 	case "cd":
 		return builtins.ChangeDirectory(args...)
 	case "env":
 		return builtins.EnvironmentVariables(w, args...)
-	case "echo":
-		return builtins.Echo(w, args...)
-	case "alias":
-		return builtins.SetAlias(w, args...)
-	case "test":
-		return builtins.Test(w, args...)
-	case "source":
-		return builtins.Source(w, args...)
 	case "export":
-		return builtins.Export(w, args...)
+   		return builtins.Export(w, args...)
+	case "alias":
+    		return builtins.Alias(w, args...)
+	case "echo":
+    		return builtins.Echo(w, args...)
+	case "test":
+    		return builtins.Test(w, args...)
+	case "source":
+    		return builtins.Source(w, args...)
 	case "exit":
 		exit <- struct{}{}
 		return nil
