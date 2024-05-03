@@ -1,42 +1,34 @@
 package builtins
 
 import (
-	"errors"
-	"fmt"
-	"io"
-	"os"
-	"strings"
+    "fmt"
+    "io"
+    "sync"
 )
 
-// SetAlias sets an alias for a command.
-func SetAlias(w io.Writer, args ...string) error {
-	if len(args) != 1 {
-		return errors.New("usage: alias name=value")
-	}
+var (
+    aliasLock sync.RWMutex
+    aliases   = make(map[string]string)
+)
 
-	parts := strings.SplitN(args[0], "=", 2)
-	if len(parts) != 2 {
-		return errors.New("invalid alias format")
-	}
+// Alias sets or displays aliases.
+func Alias(w io.Writer, args ...string) error {
+    aliasLock.Lock()
+    defer aliasLock.Unlock()
 
-	name, value := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
-
-	// Open or create the alias file.
-	f, err := os.OpenFile(".aliases", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return fmt.Errorf("failed to open alias file: %w", err)
-	}
-	defer f.Close()
-
-	// Write the alias to the file.
-	if _, err := fmt.Fprintf(f, "%s=%s\n", name, value); err != nil {
-		return fmt.Errorf("failed to write alias to file: %w", err)
-	}
-
-	// Confirm the alias was set.
-	if _, err := fmt.Fprintf(w, "Alias set: %s=%s\n", name, value); err != nil {
-		return fmt.Errorf("failed to confirm alias set: %w", err)
-	}
-
-	return nil
+    if len(args) == 0 {
+        for alias, command := range aliases {
+            fmt.Fprintf(w, "%s='%s'\n", alias, command)
+        }
+        return nil
+    }
+    for _, arg := range args {
+        parts := strings.SplitN(arg, "=", 2)
+        if len(parts) != 2 {
+            fmt.Fprintf(w, "alias: invalid format %s\n", arg)
+            continue
+        }
+        aliases[parts[0]] = parts[1]
+    }
+    return nil
 }
