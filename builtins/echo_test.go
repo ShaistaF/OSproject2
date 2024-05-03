@@ -1,39 +1,28 @@
 package builtins
 
 import (
-	"bytes"
-	"testing"
+    "bytes"
+    "testing"
 )
 
 func TestEcho(t *testing.T) {
-	tests := []struct {
-		name   string
-		args   []string
-		output string
-	}{
-		{"Simple Test", []string{"Hello", "World"}, "Hello World\n"},
-		{"Empty Args", []string{}, "\n"},
-		{"Special Characters", []string{"This", "is", "a", "test", "with", "special", "characters: !@#$%^&*()"}, "This is a test with special characters: !@#$%^&*()\n"},
-	}
+    w := new(bytes.Buffer)
+    Echo(w, "Hello", "world!")
+    if got := w.String(); got != "Hello world!\n" {
+        t.Errorf("Expected 'Hello world!', got %s", got)
+    }
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Create a buffer to capture the output.
-			var buf bytes.Buffer
+    // Test echoing nothing
+    w.Reset()
+    Echo(w)
+    if got := w.String(); got != "\n" {
+        t.Errorf("Expected newline, got %s", got)
+    }
 
-			// Call the Echo function with the test arguments and the buffer as the writer.
-			err := Echo(&buf, tt.args...)
-
-			// Check if there was an error.
-			if err != nil {
-				t.Errorf("Echo() error = %v", err)
-				return
-			}
-
-			// Compare the expected output with the actual output captured in the buffer.
-			if got := buf.String(); got != tt.output {
-				t.Errorf("Echo() = %v, want %v", got, tt.output)
-			}
-		})
-	}
+    // Test echoing with multiple spaces
+    w.Reset()
+    Echo(w, "This", " ", "is", "a", "test")
+    if got := w.String(); got != "This   is a test\n" {
+        t.Errorf("Expected 'This   is a test', got %s", got)
+    }
 }
