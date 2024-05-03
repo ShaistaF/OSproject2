@@ -82,6 +82,8 @@ func handleInput(w io.Writer, input string, exit chan<- struct{}) error {
 		return builtins.Echo(w, args...)
 	case "whoami":
     		return builtins.Whoami(w)
+	case "clear":
+    		return builtins.Clear(w)
 	
 
 	case "exit":
