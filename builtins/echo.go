@@ -3,23 +3,12 @@ package builtins
 import (
 	"fmt"
 	"io"
+	"strings"
 )
 
+// Echo prints arguments to standard output.
 func Echo(w io.Writer, args ...string) error {
-	for i, arg := range args {
-		if i > 0 {
-			_, err := fmt.Fprint(w, " ")
-			if err != nil {
-				return err
-			}
-		}
-		_, err := fmt.Fprint(w, arg)
-		if err != nil {
-			return err
-		}
-	}
-
-	
-	_, err := fmt.Fprintln(w)
+	// Join arguments with spaces and print to writer
+	_, err := fmt.Fprintln(w, strings.Join(args, " "))
 	return err
 }
