@@ -7,8 +7,23 @@ import (
 
 func TestAlias(t *testing.T) {
     w := new(bytes.Buffer)
-    Alias(w, "ls='ls -l'")
-    if got := w.String(); !strings.Contains(got, "ls='ls -l'") {
-        t.Errorf("Expected alias not found, got %s", got)
+    Alias(w, "ll='ls -alF'", "rm='rm -i'")
+    expected := "ll='ls -alF'\nrm='rm -i'\n"
+    if got := w.String(); got != expected {
+        t.Errorf("Expected %q, got %q", expected, got)
+    }
+
+    // Test listing aliases with no arguments
+    w.Reset()
+    Alias(w)
+    if got := w.String(); got != expected {
+        t.Errorf("Expected to list %q, got %q", expected, got)
+    }
+
+    // Test invalid format
+    w.Reset()
+    Alias(w, "invalid")
+    if got := w.String(); !strings.Contains(got, "invalid format") {
+        t.Errorf("Expected error message for invalid format, got %q", got)
     }
 }
