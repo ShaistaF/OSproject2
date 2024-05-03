@@ -3,6 +3,7 @@ package builtins
 import (
     "fmt"
     "io"
+    "strings"
     "sync"
 )
 
@@ -11,24 +12,30 @@ var (
     aliases   = make(map[string]string)
 )
 
-// Alias sets or displays aliases.
+// Alias sets or displays aliases. Pass no arguments to list all aliases.
 func Alias(w io.Writer, args ...string) error {
     aliasLock.Lock()
     defer aliasLock.Unlock()
 
     if len(args) == 0 {
-        for alias, command := range aliases {
-            fmt.Fprintf(w, "%s='%s'\n", alias, command)
+        for k, v := range aliases {
+            fmt.Fprintf(w, "%s='%s'\n", k, v)
         }
         return nil
     }
+
     for _, arg := range args {
         parts := strings.SplitN(arg, "=", 2)
         if len(parts) != 2 {
             fmt.Fprintf(w, "alias: invalid format %s\n", arg)
             continue
         }
-        aliases[parts[0]] = parts[1]
+        key, value := parts[0], parts[1]
+        if key == "" || value == "" {
+            fmt.Fprintf(w, "alias: invalid format %s\n", arg)
+            continue
+        }
+        aliases[key] = value
     }
     return nil
 }
