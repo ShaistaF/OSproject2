@@ -1,43 +1,30 @@
 package builtins
 
 import (
-	"bytes"
-	"os"
-	"testing"
-	"strings"
+    "bytes"
+    "os"
+    "testing"
 )
 
 func TestExport(t *testing.T) {
-	tests := []struct {
-		name        string
-		args        []string
-		expectedErr bool
-	}{
-		{"Valid Export", []string{"TEST_VAR=test_value"}, false},
-		{"Missing Value", []string{"TEST_VAR"}, true},
-		{"Invalid Argument", []string{"invalid_argument"}, true},
-	}
+    w := new(bytes.Buffer)
+    // Test setting an environment variable
+    Export(w, "TEST_VAR=hello_world")
+    if val, exists := os.LookupEnv("TEST_VAR"); !exists || val != "hello_world" {
+        t.Errorf("Expected environment variable 'TEST_VAR' to be 'hello_world', got %s", val)
+    }
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Call the Export function with the test arguments.
-			var buf bytes.Buffer
-			err := Export(&buf, tt.args...)
+    // Test listing all environment variables
+    w.Reset()
+    Export(w)
+    if got := w.String(); !strings.Contains(got, "TEST_VAR=hello_world") {
+        t.Errorf("Expected listing to include 'TEST_VAR=hello_world', got %s", got)
+    }
 
-			// Check if there was an error.
-			if (err != nil) != tt.expectedErr {
-				t.Errorf("Export() error = %v, expected error = %v", err, tt.expectedErr)
-				return
-			}
-
-			// Check if the environment variable was set.
-			if tt.expectedErr == false {
-				envValue := os.Getenv(strings.Split(tt.args[0], "=")[0])
-				expectedValue := strings.Split(tt.args[0], "=")[1]
-				if envValue != expectedValue {
-					t.Errorf("Export() failed to set environment variable: got %s, want %s", envValue, expectedValue)
-				}
-			}
-		})
-	}
+    // Test invalid argument
+    w.Reset()
+    Export(w, "INVALID")
+    if got := w.String(); !strings.Contains(got, "invalid argument") {
+        t.Errorf("Expected error message for invalid argument, got %s", got)
+    }
 }
