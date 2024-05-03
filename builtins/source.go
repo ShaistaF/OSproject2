@@ -1,52 +1,57 @@
 package builtins
 
 import (
-    "bufio"
-    "os"
-    "os/exec"
-    "strings"
+	"bufio"
+	"fmt"
+	"io"
+	"os"
+	"os/exec"
+	"strings"
 )
 
 // Source reads and executes commands from a file in the current shell environment.
-func Source(filePath string) (string, error) {
-    // Open the file for reading.
-    file, err := os.Open(filePath)
-    if err != nil {
-        return "", err
-    }
-    defer file.Close()
+func Source(w io.Writer, args ...string) error {
+	if len(args) < 1 {
+		return fmt.Errorf("usage: source filename [arg1 arg2 ...]")
+	}
 
-    var output strings.Builder
+	// Open the file for reading.
+	file, err := os.Open(args[0])
+	if err != nil {
+		return err
+	}
+	defer file.Close()
 
-    // Create a scanner to read lines from the file.
-    scanner := bufio.NewScanner(file)
+	// Create a scanner to read lines from the file.
+	scanner := bufio.NewScanner(file)
 
-    // Iterate over each line in the file.
-    for scanner.Scan() {
-        // Get the command from the current line.
-        line := scanner.Text()
+	// Iterate over each line in the file.
+	for scanner.Scan() {
+		// Get the command from the current line.
+		line := scanner.Text()
 
-        // Skip empty lines and comments.
-        if line == "" || strings.HasPrefix(line, "#") {
-            continue
-        }
+		// Skip empty lines and comments.
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
 
-        // Execute the command and capture its output.
-        cmd := exec.Command("sh", "-c", line)
-        cmdOutput, err := cmd.CombinedOutput()
-        if err != nil {
-            return "", err
-        }
+		// Execute the command and capture its output.
+		cmd := exec.Command("sh", "-c", line)
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			return fmt.Errorf("failed to execute command '%s': %v", line, err)
+		}
 
-        // Append the command output to the result.
-        output.WriteString(string(cmdOutput))
-        output.WriteString("\n") // Add a newline between command outputs
-    }
+		// Write the command output to the provided writer.
+		if _, err := w.Write(output); err != nil {
+			return fmt.Errorf("failed to write command output: %v", err)
+		}
+	}
 
-    // Check for any errors encountered during scanning.
-    if err := scanner.Err(); err != nil {
-        return "", err
-    }
+	// Check for any errors encountered during scanning.
+	if err := scanner.Err(); err != nil {
+		return err
+	}
 
-    return output.String(), nil
+	return nil
 }
