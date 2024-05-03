@@ -80,14 +80,9 @@ func handleInput(w io.Writer, input string, exit chan<- struct{}) error {
 		return builtins.EnvironmentVariables(w, args...)
 	case "echo":
 		return builtins.Echo(w, args...)
-	case "alias":
-		return builtins.Alias(w, args...)
-	case "export":
-		return builtins.Export(w, args...)
-	case "test":
-		return builtins.Test(w, args...)
-	case "source":
-		return builtins.Source(w, args...)
+	case "whoami":
+    		return builtins.Whoami(w)
+	
 
 	case "exit":
 		exit <- struct{}{}
