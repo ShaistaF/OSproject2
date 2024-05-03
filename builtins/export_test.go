@@ -1,43 +1,53 @@
-package builtins
+package builtins_test
 
 import (
 	"bytes"
 	"os"
-	"testing"
 	"strings"
+	"testing"
+
+	"github.com/jh125486/CSCE4600/Project2/builtins"
 )
 
-func TestExport(t *testing.T) {
-	tests := []struct {
-		name        string
-		args        []string
-		expectedErr bool
-	}{
-		{"Valid Export", []string{"TEST_VAR=test_value"}, false},
-		{"Missing Value", []string{"TEST_VAR"}, true},
-		{"Invalid Argument", []string{"invalid_argument"}, true},
+func TestExport_Print(t *testing.T) {
+	var buf bytes.Buffer
+
+	// Test printing environment variables
+	err := builtins.Export(&buf)
+	if err != nil {
+		t.Errorf("Export failed: %v", err)
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Call the Export function with the test arguments.
-			var buf bytes.Buffer
-			err := Export(&buf, tt.args...)
+	// Split buffer by lines to count environment variables
+	lines := strings.Split(strings.TrimSpace(buf.String()), "\n")
+	if len(lines) != len(os.Environ()) {
+		t.Errorf("Expected %d environment variables, got %d", len(os.Environ()), len(lines))
+	}
+}
 
-			// Check if there was an error.
-			if (err != nil) != tt.expectedErr {
-				t.Errorf("Export() error = %v, expected error = %v", err, tt.expectedErr)
-				return
-			}
+func TestExport_Set(t *testing.T) {
+	// Test setting environment variables
+	err := builtins.Export(nil, "key1=value1", "key2=value2")
+	if err != nil {
+		t.Errorf("Export failed: %v", err)
+	}
 
-			// Check if the environment variable was set.
-			if tt.expectedErr == false {
-				envValue := os.Getenv(strings.Split(tt.args[0], "=")[0])
-				expectedValue := strings.Split(tt.args[0], "=")[1]
-				if envValue != expectedValue {
-					t.Errorf("Export() failed to set environment variable: got %s, want %s", envValue, expectedValue)
-				}
-			}
-		})
+	// Check if environment variables are set
+	val1 := os.Getenv("key1")
+	if val1 != "value1" {
+		t.Errorf("Environment variable key1 not set correctly: got %s, want value1", val1)
+	}
+
+	val2 := os.Getenv("key2")
+	if val2 != "value2" {
+		t.Errorf("Environment variable key2 not set correctly: got %s, want value2", val2)
+	}
+}
+
+func TestExport_InvalidArgumentFormat(t *testing.T) {
+	// Test invalid argument format
+	err := builtins.Export(nil, "invalid_format")
+	if err == nil {
+		t.Error("Export should return error for invalid argument format")
 	}
 }
