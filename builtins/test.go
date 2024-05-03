@@ -3,35 +3,25 @@ package builtins
 import (
 	"fmt"
 	"io"
+	"os"
+	"os/exec"
+	"strings"
 )
 
-
+// Test evaluates conditional expressions.
 func Test(w io.Writer, args ...string) error {
-	if len(args) < 3 {
-		return fmt.Errorf("usage: test arg1 operator arg2")
+	if len(args) == 0 {
+		return fmt.Errorf("no test expression provided")
 	}
-	arg1, operator, arg2 := args[0], args[1], args[2]
-	result := false
-	switch operator {
-	case "=":
-		result = arg1 == arg2
-	case "!=":
-		result = arg1 != arg2
-	case ">":
-		result = arg1 > arg2
-	case "<":
-		result = arg1 < arg2
-	case ">=":
-		result = arg1 >= arg2
-	case "<=":
-		result = arg1 <= arg2
-	default:
-		return fmt.Errorf("unsupported operator: %s", operator)
+
+	cmd := exec.Command("test", args...)
+	cmd.Stdout = w
+	cmd.Stderr = os.Stderr
+
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("test failed: %v", err)
 	}
-	if result {
-		_, err := fmt.Fprintln(w, "true")
-		return err
-	}
-	_, err := fmt.Fprintln(w, "false")
-	return err
+
+	return nil
 }
