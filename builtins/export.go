@@ -1,30 +1,30 @@
 package builtins
 
 import (
-	"fmt"
-	"io"
-	"os"
-	"strings"
+    "fmt"
+    "io"
+    "os"
+    "strings"
 )
 
-
+// Export sets or displays environment variables.
 func Export(w io.Writer, args ...string) error {
-	if len(args) < 1 {
-		return fmt.Errorf("usage: export name1=value1 [name2=value2 ...]")
-	}
-
-	for _, arg := range args {
-		parts := strings.SplitN(arg, "=", 2)
-		if len(parts) != 2 {
-			return fmt.Errorf("invalid argument: %s", arg)
-		}
-		key, value := parts[0], parts[1]
-		os.Setenv(key, value)
-		_, err := fmt.Fprintf(w, "Exported variable: %s=%s\n", key, value)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+    if len(args) == 0 {
+        for _, env := range os.Environ() {
+            fmt.Fprintln(w, env)
+        }
+        return nil
+    }
+    for _, arg := range args {
+        parts := strings.SplitN(arg, "=", 2)
+        if len(parts) != 2 {
+            fmt.Fprintf(w, "export: invalid argument %s\n", arg)
+            continue
+        }
+        if err := os.Setenv(parts[0], parts[1]); err != nil {
+            fmt.Fprintf(w, "export: failed to set %s\n", arg)
+            return err
+        }
+    }
+    return nil
 }
