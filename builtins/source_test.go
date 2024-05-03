@@ -1,42 +1,43 @@
 package builtins
 
 import (
-	"bytes"
-	"io/ioutil"
-	"os"
-	"testing"
+    "io/ioutil"
+    "os"
+    "testing"
 )
 
+// TestSource tests the Source function.
 func TestSource(t *testing.T) {
-	// Create a temporary file for testing.
-	content := "# Comment\necho Hello World\npwd"
-	tmpfile, err := ioutil.TempFile("", "example")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.Remove(tmpfile.Name()) // Clean up the temporary file
-	if _, err := tmpfile.Write([]byte(content)); err != nil {
-		t.Fatal(err)
-	}
-	if err := tmpfile.Close(); err != nil {
-		t.Fatal(err)
-	}
+    // Create a temporary file with commands
+    file, err := ioutil.TempFile("", "testfile.txt")
+    if err != nil {
+        t.Fatal(err)
+    }
+    defer os.Remove(file.Name()) // Clean up
 
-	// Create a buffer to capture the output.
-	var buf bytes.Buffer
+    // Write commands to the file
+    commands := []string{"echo Hello", "echo World"}
+    for _, cmd := range commands {
+        _, err := file.WriteString(cmd + "\n")
+        if err != nil {
+            t.Fatal(err)
+        }
+    }
+    file.Close()
 
-	// Call the Source function with the test arguments.
-	err = Source(&buf, tmpfile.Name())
-	if err != nil {
-		t.Errorf("Source() error = %v", err)
-		return
-	}
+    // Call the Source function
+    output, err := Source(file.Name())
 
-	// Check if the output contains the expected command outputs.
-	expectedOutputs := []string{"Hello World", "test"} // Update expected output to match actual command outputs
-	for _, expectedOutput := range expectedOutputs {
-		if !bytes.Contains(buf.Bytes(), []byte(expectedOutput)) {
-			t.Errorf("Source() output does not contain expected output: %s", expectedOutput)
-		}
-	}
+    // Check for error
+    if err != nil {
+        t.Fatalf("Source error: %v", err)
+    }
+
+    // Define the expected output
+    expected := []byte("Hello\nWorld\n")
+
+    // Compare the actual output with the expected output
+    if string(output) != string(expected) {
+        t.Errorf("Source() output does not match expected output: got %q, want %q", output, expected)
+    }
 }
