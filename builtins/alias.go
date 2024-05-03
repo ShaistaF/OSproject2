@@ -3,40 +3,56 @@ package builtins
 import (
 	"errors"
 	"fmt"
-	"io"
-	"os"
 	"strings"
 )
 
-// SetAlias sets an alias for a command.
-func SetAlias(w io.Writer, args ...string) error {
-	if len(args) != 1 {
-		return errors.New("usage: alias name=value")
+// Alias creates or displays aliases.
+type AliasMap map[string]string
+
+var aliases AliasMap
+
+// SetAlias sets an alias.
+func SetAlias(name, value string) {
+	if aliases == nil {
+		aliases = make(AliasMap)
 	}
-
-	parts := strings.SplitN(args[0], "=", 2)
-	if len(parts) != 2 {
-		return errors.New("invalid alias format")
-	}
-
-	name, value := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
-
-	// Open or create the alias file.
-	f, err := os.OpenFile(".aliases", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return fmt.Errorf("failed to open alias file: %w", err)
-	}
-	defer f.Close()
-
-	// Write the alias to the file.
-	if _, err := fmt.Fprintf(f, "%s=%s\n", name, value); err != nil {
-		return fmt.Errorf("failed to write alias to file: %w", err)
-	}
-
-	// Confirm the alias was set.
-	if _, err := fmt.Fprintf(w, "Alias set: %s=%s\n", name, value); err != nil {
-		return fmt.Errorf("failed to confirm alias set: %w", err)
-	}
-
-	return nil
+	aliases[name] = value
 }
+
+// GetAlias retrieves the value of an alias.
+func GetAlias(name string) (string, bool) {
+	val, ok := aliases[name]
+	return val, ok
+}
+
+// UnsetAlias removes an alias.
+func UnsetAlias(name string) {
+	delete(aliases, name)
+}
+
+// PrintAliases prints all aliases to standard output.
+func PrintAliases() {
+	for name, value := range aliases {
+		fmt.Printf("%s=%s\n", name, value)
+	}
+}
+
+// ExpandAlias expands the alias in a command.
+func ExpandAlias(cmd string) string {
+	parts := strings.Fields(cmd)
+	for i, part := range parts {
+		if val, ok := aliases[part]; ok {
+			parts[i] = val
+		}
+	}
+	return strings.Join(parts, " ")
+}
+
+// ErrAliasNotFound is returned when alias is not found.
+var ErrAliasNotFound = errors.New("alias not found")
+
+// ErrAliasExists is returned when trying to set an alias that already exists.
+var ErrAliasExists = errors.New("alias already exists")
+
+// ErrAliasNotSet is returned when trying to get an unset alias.
+var ErrAliasNotSet = errors.New("alias not set")
