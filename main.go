@@ -79,7 +79,7 @@ func handleInput(w io.Writer, input string, exit chan<- struct{}) error {
 	case "clear":
     		return builtins.Clear(w)
 	case "date":
-    		return builtins.Date(w)
+		return builtins.Date(w, args[0])
 	case "history":
     		return builtins.History(w)
 	case "pwd":
