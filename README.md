@@ -35,3 +35,20 @@ As an example, two shell builtins have already been added to the package builtin
       - "github.com/jh125486/CSCE4600/Project2/builtins" changes to "github.com/CoolStudent123/CSCE4600/Project2/builtins"
 
 3. Start editing the `main.go` command switch (lines 57-64) and the package `builtins` with your chosen commands.
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+The New Builtins added:
+1. Echo: Outputs the given string or strings back to the terminal.
+2. Clear: Clears the terminal screen, removing all previous output.
+3. Date: Outputs the current date and time based on the system's locale settings.
+4. History: Displays a list of previously executed commands in the session.
+5. Pwd: Prints the current working directory path to the terminal.
+6. Sleep: Pauses the execution of the program for a specified number of seconds.
+7. Hostname: Shows the name of the system on which the environment is running.
+8. Version: Displays the version of the application.
+9. Help: Provides a list and descriptions of all available commands within the application.
+10. Whoami: Displays the current system user's username.
+
+   
+
