@@ -74,15 +74,15 @@ func handleInput(w io.Writer, input string, exit chan<- struct{}) error {
 	case "echo":
 		return builtins.Echo(w, args...)
 	case "pwd":
-			return builtins.Pwd(w)
+		return builtins.Pwd(w)
 	case "sleep":
-			return builtins.Sleep(w, args)
+		return builtins.Sleep(w, args)
 	case "help":
-			return builtins.Help(w) //edit, update
+		return builtins.Help(w) //edit, update
 	case "command":
-			return builtins.Command(args...)
+		return builtins.Command(args...)
 	case "logout":
-        return builtins.Logout(args...) 
+        	return builtins.Logout(args...) 
 		
 	case "exit":
 		exit <- struct{}{}
