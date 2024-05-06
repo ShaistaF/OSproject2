@@ -80,7 +80,11 @@ func handleInput(w io.Writer, input string, exit chan<- struct{}) error {
 	case "sleep":
 		return builtins.Sleep(w, args)	
 	case "hostname":
-		return builtins.Hostname(w)	
+		return builtins.Hostname(w)
+	case "Clear":
+		return builtins.Clear(w)
+	case "whoami":
+		return builtins.Whoami(w)
 	case "exit":
 		exit <- struct{}{}
 		return nil
