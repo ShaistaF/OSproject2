@@ -38,13 +38,12 @@ As an example, two shell builtins have already been added to the package builtin
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
-The New Builtins added:
+The New Builtins added in the project:
 1. Echo: Outputs the given string or strings back to the terminal.
-2. Command:
-3. Logout:
-4. Pwd: Prints the current working directory path to the terminal.
-5. Sleep: Pauses the execution of the program for a specified number of seconds.
-6. Help: Provides a list and descriptions of all available commands within the application.
+2. Hostname: Prints the users Hostname to the terminal.
+3. Pwd: Prints the current working directory path to the terminal.
+4. Sleep: Pauses the execution of the program for a specified number of seconds.
+5. Help: Provides a list and descriptions of all available commands within the application.
 
 
    
